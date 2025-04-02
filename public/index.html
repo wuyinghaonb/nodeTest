@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>登录获取答案</h1>
+<form id="loginForm">
+    <input type="text" name="username" placeholder="用户名" required><br>
+    <input type="password" name="password" placeholder="密码" required><br>
+    <button type="submit">登录</button>
+</form>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.querySelector('input[name="username"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+
+        // 前端对密码进行SHA-256哈希
+        const hashedPassword = CryptoJS.SHA256(password).toString();
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password: hashedPassword })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert(`登录成功！答案：${result.answer}`);
+            } else {
+                alert('登录失败！用户名或密码错误。');
+            }
+        } catch (error) {
+            alert('请求失败，请检查网络！');
+        }
+    });
+</script>
+</body>
+</html>
